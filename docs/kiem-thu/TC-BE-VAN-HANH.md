@@ -51,3 +51,29 @@
 | BE-KT-05 | Chính | Power BI | Đăng nhập `ketoan01` | `GET /api/ke-toan/power-bi/kho-du-lieu`, `GET .../ket-noi`, `POST .../xuat-du-lieu` | 200. Xuất được dữ liệu, nhật ký ghi `XUAT_DU_LIEU_POWERBI` | | Chưa chạy |
 | BE-DG-01 | Chính | Khách đánh giá tour | `khach01` đã tham gia tour `KET_THUC` | `POST /api/khach-hang/danh-gia` | 200. Kinh doanh xem được qua `GET /api/kinh-doanh/danh-gia` | | Chưa chạy |
 
+## B. Dữ liệu sai, trạng thái sai và phân quyền
+
+| Mã TC | Loại | Chức năng | Tiền điều kiện | Các bước | Kết quả mong đợi | Kết quả thực tế | Trạng thái |
+|---|---|---|---|---|---|---|---|
+| BE-QT-06 | Lỗi | Tự khóa chính mình | Đăng nhập `admin` | Khóa tài khoản của chính `admin` | 400 "Không thể tự khóa chính tài khoản của bạn." | | Chưa chạy |
+| BE-QT-07 | Lỗi | Khóa tài khoản đã khóa | Tài khoản đang `KHOA` | Gọi khóa lần nữa | 400 "Tài khoản đã ở trạng thái KHOA." | | Chưa chạy |
+| BE-QT-08 | Quyền | Không phải admin xem nhật ký | Đăng nhập `manager01` | `GET /api/quan-tri/nhat-ky-he-thong` | 403 | | Chưa chạy |
+| BE-SP-08 | Lỗi | Lịch trình vượt thời lượng | Tour mẫu 3 ngày | Thêm lịch trình ngày thứ 4 | 400 "Ngay thu khong duoc vuot qua thoi luong tour (…)" | | Chưa chạy |
+| BE-SP-09 | Lỗi | Xóa tour mẫu đang dùng | Tour mẫu đã có tour thực tế | `DELETE /api/san-pham/tour-mau/{id}` | 400 "Không thể xóa tour mẫu vì đã có tour thực tế liên kết" | | Chưa chạy |
+| BE-SP-10 | Lỗi | Giá thấp hơn giá sàn | Có tour mẫu | Tạo tour thực tế với giá nhỏ hơn giá sàn | 400 "Gia hien hanh khong duoc thap hon gia san cua tour mau (…)" | | Chưa chạy |
+| BE-SP-11 | Lỗi | Số khách sai | – | Tạo tour thực tế với số khách tối thiểu lớn hơn tối đa | 400 "Số khách tối thiểu không được lớn hơn số khách tối đa" | | Chưa chạy |
+| BE-SP-12 | Lỗi | Xóa tour đã có đơn | Tour thực tế đã có đơn đặt | `DELETE /api/dieu-hanh/tour-thuc-te/{id}` | 400 "Không thể xóa tour thực tế đã phát sinh đơn đặt tour" | | Chưa chạy |
+| BE-SP-13 | Quyền | Kinh doanh tạo tour mẫu | Đăng nhập `sales01` | `POST /api/san-pham/tour-mau` | 403 | | Chưa chạy |
+| BE-DH-06 | Lỗi | Mở bán khi chưa có HDV | Tour `CHO_KICH_HOAT` chưa có HDV nhận | Cập nhật sang `MO_BAN` | 400 "Tour chỉ được mở bán khi có HDV đã xác nhận phân công." | | Chưa chạy |
+| BE-DH-07 | Lỗi | HDV trùng lịch | HDV đã được phân công tour khác cùng thời gian | Phân công HDV đó cho tour này | 400 "HDV đã bị phân công cho tour khác trong cùng thời gian." | | Chưa chạy |
+| BE-DH-08 | Lỗi | Phản hồi phân công hai lần | HDV đã đồng ý | Gọi `dong-y` hoặc `tu-choi` lần nữa | 400 "Phân công đã được phản hồi trước đó." | | Chưa chạy |
+| BE-DH-09 | Quyền | HDV phản hồi phân công của người khác | Phân công thuộc `hdv02` | Đăng nhập `hdv01`, gọi `dong-y` | 403 "Bạn không có quyền phản hồi phân công này" | | Chưa chạy |
+| BE-VH-06 | Lỗi | Mức độ sự cố sai | Như BE-VH-04 | Báo sự cố với mức độ `CAO` | 400 "Mức độ sự cố không hợp lệ. Chỉ chấp nhận: THAP, SOS" | | Chưa chạy |
+| BE-VH-07 | Lỗi | Ghi hành động xanh trùng | Đã ghi nhận ở BE-VH-03 | Ghi lại cùng hành động cho cùng khách | 400 "Hành động xanh này đã được ghi nhận cho khách hàng trong tour." | | Chưa chạy |
+| BE-VH-08 | Quyền | HDV vận hành tour không phụ trách | Tour do `hdv02` phụ trách | Đăng nhập `hdv01`, điểm danh tour đó | 403 "Bạn không có quyền vận hành tour này" | | Chưa chạy |
+| BE-KT-06 | Lỗi | Quyết toán tour chưa kết thúc | Tour `DANG_DIEN_RA` | `POST /api/ke-toan/quyet-toan/{maTour}` | 400 "Tour chưa kết thúc, không thể quyết toán." | | Chưa chạy |
+| BE-KT-07 | Lỗi | Sửa quyết toán đã chốt | Quyết toán đã chốt | Gọi `yeu-cau-bo-sung` | 400 "Quyết toán đã bị chốt, không thể yêu cầu bổ sung." | | Chưa chạy |
+| BE-KT-08 | Lỗi | Duyệt chi phí đã xử lý | Chi phí đã duyệt | Gọi `duyet` lần nữa | 400 "Chi phí đã được xử lý rồi." | | Chưa chạy |
+| BE-KT-09 | Quyền | Kinh doanh xem báo cáo | Đăng nhập `sales01` | `GET /api/ke-toan/bao-cao/doanh-thu` | 403 | | Chưa chạy |
+| BE-DG-02 | Lỗi | Đánh giá tour chưa kết thúc | Tour `DANG_DIEN_RA` | `POST /api/khach-hang/danh-gia` | 400 "Chỉ có thể đánh giá tour đã kết thúc" | | Chưa chạy |
+| BE-DG-03 | Lỗi | Đánh giá hai lần | Đã đánh giá ở BE-DG-01 | Gửi đánh giá lần nữa | 400 "Bạn đã đánh giá tour này rồi" | | Chưa chạy |
