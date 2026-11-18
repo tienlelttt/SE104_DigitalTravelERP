@@ -36,3 +36,20 @@
 | FA-KT-03 | Chính | Hoàn tiền | Có giao dịch hoàn tiền chờ | Vào `/finance/refund`, xử lý hoàn tiền | Giao dịch chuyển đã hoàn | | Chưa chạy |
 | FA-KT-04 | Chính | Tổng quan và Power BI | Đăng nhập `ketoan01` | Vào `/dashboard`, mở hộp kết nối Power BI | Hiện số liệu tổng quan và thông tin kết nối | | Chưa chạy |
 
+## B. Dữ liệu sai, phân quyền và giao diện
+
+| Mã TC | Loại | Chức năng | Tiền điều kiện | Các bước | Kết quả mong đợi | Kết quả thực tế | Trạng thái |
+|---|---|---|---|---|---|---|---|
+| FA-DN-04 | Lỗi | Sai mật khẩu | Ở `/login` | Nhập mật khẩu sai | Hiện thông báo lỗi, vẫn ở `/login` | | Chưa chạy |
+| FA-DN-05 | Lỗi | Bỏ trống trường | Ở `/login` | Bấm Đăng nhập khi chưa nhập gì | Báo trường bắt buộc, không gửi yêu cầu | | Chưa chạy |
+| FA-DN-06 | Quyền | Vào trang khi chưa đăng nhập | Chưa đăng nhập | Gõ trực tiếp `/orders` | Bị chuyển về `/login` | | Chưa chạy |
+| FA-DN-07 | Quyền | Token hết hạn | Đã đăng nhập | Sửa token trong localStorage cho sai, tải lại một trang có gọi API | API trả 401, ứng dụng xóa token và đưa về `/login` | | Chưa chạy |
+| FA-PQ-06 | Quyền | Gõ URL ngoài quyền | Đăng nhập `sanpham01` | Gõ trực tiếp `/system/accounts` | Không vào được trang (chặn hoặc chuyển về trang được phép) | | Chưa chạy |
+| FA-PQ-07 | Quyền | Kế toán vào khuyến mãi | Đăng nhập `ketoan01` | Gõ trực tiếp `/promotions` | Không vào được trang | | Chưa chạy |
+| FA-PQ-08 | Lỗi | Đường dẫn không tồn tại | Đã đăng nhập | Gõ `/abc` | Hiện trang không tìm thấy hoặc chuyển về tổng quan, không trắng trang | | Chưa chạy |
+| FA-SP-04 | Lỗi | Giá thấp hơn giá sàn | Ở trình tạo tour thực tế | Nhập giá thấp hơn giá sàn của tour mẫu, Lưu | Hiện thông báo lỗi từ backend, không tạo tour | | Chưa chạy |
+| FA-SP-05 | Lỗi | Bỏ trống trường bắt buộc | Ở form dịch vụ | Để trống tên dịch vụ, Lưu | Báo lỗi tại trường, không gửi yêu cầu | | Chưa chạy |
+| FA-KD-06 | Lỗi | Voucher phần trăm quá 100 | Ở form tạo voucher | Chọn phần trăm, nhập 120, Lưu | Hiện thông báo lỗi, không tạo voucher | | Chưa chạy |
+| FA-DH-03 | Lỗi | Mở bán khi chưa có HDV | Tour chưa có HDV nhận | Đổi trạng thái tour sang mở bán | Hiện thông báo "Tour chỉ được mở bán khi có HDV đã xác nhận phân công." | | Chưa chạy |
+| FA-GD-01 | Lỗi | Mất kết nối backend | Đã đăng nhập | Tắt backend, tải lại `/orders` | Hiện thông báo lỗi tải dữ liệu, không trắng trang | | Chưa chạy |
+| FA-GD-02 | Chính | Màn hình nhỏ | Đã đăng nhập | Thu cửa sổ còn 1024px, mở các trang chính | Bảng cuộn ngang được, nút và menu không bị che | | Chưa chạy |
