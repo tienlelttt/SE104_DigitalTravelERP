@@ -42,3 +42,33 @@
 | BE-VC-05 | Chính | Thu hồi voucher | Voucher đã phân bổ cho khách | `PUT /api/kinh-doanh/voucher/{maVoucher}/khach-hang/{maKhachHang}/thu-hoi` | 200. Voucher không còn dùng được trong ví khách | | Chưa chạy |
 | BE-UP-01 | Chính | Tải lên chứng từ | Có file ảnh hợp lệ | `POST /api/public/upload` với file, rồi `GET /api/public/upload/files/{fileName}` | 200. Trả tên file, tải lại được đúng nội dung | | Chưa chạy |
 
+## B. Dữ liệu sai, trạng thái sai và phân quyền
+
+| Mã TC | Loại | Chức năng | Tiền điều kiện | Các bước | Kết quả mong đợi | Kết quả thực tế | Trạng thái |
+|---|---|---|---|---|---|---|---|
+| BE-AU-06 | Lỗi | Đăng ký trùng tên đăng nhập | Đã có `khach01` | Đăng ký với tên đăng nhập `khach01` | 400 "Tên đăng nhập đã tồn tại" | | Chưa chạy |
+| BE-AU-07 | Lỗi | Đăng ký trùng email hoặc CCCD | Có tài khoản dùng email và CCCD đó | Đăng ký lại với email đó, sau đó với CCCD đó | 400 "Email đã được sử dụng" / "CCCD đã được sử dụng" | | Chưa chạy |
+| BE-AU-08 | Lỗi | Xác nhận mật khẩu không khớp | – | Đăng ký với mật khẩu và xác nhận khác nhau | 400 "Mật khẩu và xác nhận mật khẩu không khớp" | | Chưa chạy |
+| BE-AU-09 | Lỗi | Sai mật khẩu cũ | Đã đăng nhập | `POST /api/auth/doi-mat-khau` với mật khẩu cũ sai | 401 "Mật khẩu cũ không đúng" | | Chưa chạy |
+| BE-AU-10 | Lỗi | Đăng nhập sai mật khẩu | Có `khach01` | Đăng nhập với mật khẩu sai | 401, không trả token | | Chưa chạy |
+| BE-AU-11 | Quyền | Tài khoản bị khóa | Admin đã khóa tài khoản | Đăng nhập bằng tài khoản đó | Bị từ chối, không trả token | | Chưa chạy |
+| BE-AU-12 | Quyền | Không có token | – | Gọi `GET /api/khach-hang/ho-so` không kèm header | 401 | | Chưa chạy |
+| BE-AU-13 | Quyền | Token bị sửa | Có token hợp lệ | Sửa một ký tự trong token rồi gọi API | 401 | | Chưa chạy |
+| BE-DT-04 | Lỗi | Đặt tour chưa mở bán | Tour ở `CHO_KICH_HOAT` | `POST /api/khach-hang/dat-tour` | 400 "Tour không ở trạng thái \"Mở bán\", không thể đặt" | | Chưa chạy |
+| BE-DT-05 | Lỗi | Đặt quá số chỗ | Tour còn 1 chỗ | Đặt cho 2 người | 400 "Tour không còn đủ chỗ cho đơn đặt này" | | Chưa chạy |
+| BE-DT-06 | Lỗi | Dịch vụ không thuộc tour | – | Đặt tour kèm mã dịch vụ thêm của tour khác | 400 "Dịch vụ thêm không thuộc tour thực tế: …" | | Chưa chạy |
+| BE-DT-07 | Quyền | Xem đơn của người khác | Đơn thuộc `khach02` | Đăng nhập `khach01`, `GET /api/khach-hang/dat-tour/{maDatTour}` | 403 "Bạn không có quyền xem đơn này" | | Chưa chạy |
+| BE-DT-08 | Quyền | Khách gọi API kinh doanh | Đăng nhập `khach01` | `GET /api/kinh-doanh/dat-tour` | 403 | | Chưa chạy |
+| BE-TT-07 | Lỗi | Báo chuyển khoản khi QR hết hạn | QR đã quá 5 phút | `POST /api/thanh-toan/{maDatTour}/xac-nhan-chuyen-khoan` | 400 "Mã thanh toán QR đã hết hiệu lực." | | Chưa chạy |
+| BE-TT-08 | Lỗi | Gọi hết hạn khi QR còn hiệu lực | QR mới tạo dưới 5 phút | `POST /api/thanh-toan/{maDatTour}/het-han-qr` | 400 "Mã thanh toán QR vẫn còn hiệu lực." | | Chưa chạy |
+| BE-TT-09 | Lỗi | Thanh toán lại đơn đã thanh toán | Đơn `DA_XAC_NHAN` | `POST /api/thanh-toan/khoi-tao` | 400 "Đơn này đã được thanh toán thành công trước đó." | | Chưa chạy |
+| BE-TT-10 | Lỗi | Thanh toán đơn hết hạn giữ chỗ | Đơn `HET_HAN_GIU_CHO` | `POST /api/thanh-toan/khoi-tao` | 400 "Đơn đặt tour đã hết hạn giữ chỗ. Vui lòng đặt lại." | | Chưa chạy |
+| BE-TT-11 | Quyền | Thanh toán đơn của người khác | Đơn thuộc `khach02` | Đăng nhập `khach01`, khởi tạo thanh toán đơn đó | 403 "Bạn không có quyền thanh toán đơn này" | | Chưa chạy |
+| BE-HT-03 | Lỗi | Hủy sát ngày khởi hành | Đơn `DA_XAC_NHAN`, còn dưới 2 ngày đến ngày khởi hành | Gửi yêu cầu hủy | 400 "Không thể yêu cầu hoàn tiền trong vòng 2 ngày trước ngày khởi hành tour" | | Chưa chạy |
+| BE-HT-04 | Lỗi | Gửi trùng yêu cầu hủy | Đơn đã có yêu cầu hủy chờ xử lý | Gửi yêu cầu hủy lần nữa | 400 "Đã có yêu cầu hủy tour đang chờ xử lý cho đơn này." | | Chưa chạy |
+| BE-VC-06 | Lỗi | Voucher phần trăm quá 100% | Đăng nhập `sales01` | Tạo voucher `PHAN_TRAM` với giá trị 120 | 400 "Giảm PHAN_TRAM không được vượt qua 100%" | | Chưa chạy |
+| BE-VC-07 | Lỗi | Ngày voucher sai | Đăng nhập `sales01` | Tạo voucher có ngày hiệu lực sau ngày hết hạn | 400 "Ngày hiệu lực phải trước Ngày hết hạn" | | Chưa chạy |
+| BE-VC-08 | Lỗi | Áp voucher hết hạn | Voucher trong ví đã quá ngày hết hạn | `POST /api/khach-hang/ap-voucher` | 400 "Voucher đã hết hạn" | | Chưa chạy |
+| BE-VC-09 | Lỗi | Áp một voucher hai lần | Voucher đã áp cho đơn | Áp lại cho cùng đơn | 400 "Voucher này đã được áp dụng cho đơn này" | | Chưa chạy |
+| BE-VC-10 | Lỗi | Phát hành trùng | `khach01` đã có voucher | Phát hành lại cho `khach01` | 400 "Khách hàng này đã có voucher này rồi" | | Chưa chạy |
+| BE-VC-11 | Quyền | Khách tạo voucher | Đăng nhập `khach01` | `POST /api/kinh-doanh/voucher` | 403 | | Chưa chạy |
