@@ -32,3 +32,20 @@
 | FH-SC-01 | Chính | Báo sự cố | Tour đang diễn ra | Mở tab Sự cố, chọn mức SOS, nhập mô tả, Gửi | Sự cố hiện trong danh sách | | Chưa chạy |
 | FH-HS-01 | Chính | Hồ sơ HDV | Đã đăng nhập | Mở tab Hồ sơ | Hiện thông tin cá nhân và năng lực | | Chưa chạy |
 
+## B. Dữ liệu sai, phân quyền và giao diện
+
+| Mã TC | Loại | Chức năng | Tiền điều kiện | Các bước | Kết quả mong đợi | Kết quả thực tế | Trạng thái |
+|---|---|---|---|---|---|---|---|
+| FK-XT-02 | Lỗi | Sai mật khẩu | Ở hộp đăng nhập | Nhập mật khẩu sai | Hiện thông báo lỗi, không đóng hộp thoại | | Chưa chạy |
+| FK-XT-03 | Lỗi | Đăng ký trùng email | Email đã có | Đăng ký với email đó | Hiện "Email đã được sử dụng" | | Chưa chạy |
+| FK-DT-05 | Quyền | Đặt tour khi chưa đăng nhập | Chưa đăng nhập, ở chi tiết tour | Bấm Đặt tour | Mở hộp đăng nhập thay vì cửa sổ đặt tour | | Chưa chạy |
+| FK-DT-06 | Lỗi | Thiếu thông tin hành khách | Ở bước hành khách | Bỏ trống họ tên người đồng hành, bấm Tiếp | Báo lỗi tại trường, không sang bước sau | | Chưa chạy |
+| FK-DT-07 | Lỗi | Tour hết chỗ | Tour còn 0 chỗ | Mở chi tiết tour | Nút Đặt tour bị khóa hoặc hiện "Tour đã hết chỗ" | | Chưa chạy |
+| FK-TT-02 | Lỗi | QR hết hạn | Đang ở bước thanh toán QR | Chờ quá 5 phút, không bấm gì | Hiện thông báo mã QR hết hạn, đơn hết hạn giữ chỗ | | Chưa chạy |
+| FK-HC-05 | Quyền | Vào hộ chiếu số khi chưa đăng nhập | Chưa đăng nhập | Gõ `/passport` | Yêu cầu đăng nhập, không hiện dữ liệu | | Chưa chạy |
+| FK-GD-01 | Lỗi | Đường dẫn sai | – | Gõ `/xyz` | Hiện trang 404 | | Chưa chạy |
+| FK-GD-02 | Chính | Giao diện điện thoại | Màn hình 375px | Mở trang chủ, chi tiết tour, cửa sổ đặt tour | Không tràn ngang, menu thu gọn hoạt động, nút bấm được | | Chưa chạy |
+| FH-DN-02 | Quyền | Khách đăng nhập cổng HDV | Ở cổng HDV | Đăng nhập `khach01` | Bị từ chối, không vào bảng điều khiển | | Chưa chạy |
+| FH-DN-03 | Quyền | Hết phiên | Đã đăng nhập cổng HDV | Sửa token cho sai, thao tác một tab | Ứng dụng đưa về màn hình đăng nhập | | Chưa chạy |
+| FH-SC-02 | Lỗi | Sự cố thiếu mô tả | Ở tab Sự cố | Bỏ trống mô tả, Gửi | Hiện "Mô tả sự cố không được để trống" | | Chưa chạy |
+| FH-DX-02 | Lỗi | Ghi trùng hành động xanh | Đã ghi ở FH-DX-01 | Ghi lại cùng hành động cho cùng khách | Hiện thông báo đã ghi nhận trước đó | | Chưa chạy |
